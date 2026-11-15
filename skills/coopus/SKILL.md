@@ -34,7 +34,7 @@ Identify the current stage, call the right coopus skill, and hold the human/AI s
 | Want to add a rule or change the do-not-copy list | `coopus-evidence-gate` (New rules section) |
 
 - Start at the earliest stage not yet done. If the user asks for code and no acceptance criteria are approved, run `coopus-grill` for the acceptance criteria only.
-- Small changes (wording, config, one-line fix) may skip stages 1–3. Stage 5 is never skipped.
+- Small changes (wording, config, one-line fix) may skip stages 1–3. Stage 5 is never skipped. Wording or config change: run the code that shows it and paste the output before and after, plus the existing tests' result. Behavior fix: a test that fails before and passes after.
 - Propose going back a stage only when the answer would change the approach.
 
 ## The human's role
@@ -49,15 +49,17 @@ The human does three things. Everything else is the AI's job.
 
 - Don't agree with the user to please them. The user wants to be challenged.
 - Don't replace a list of expert dimensions with "act as an expert".
-- Don't write code before the acceptance criteria are approved.
+- Don't write code before the human says yes to the acceptance criteria. "Don't ask me", "I'm in a hurry", or a repeated "just write it" removes the questions, not the yes: give default criteria (at most five), one line on why, and end with "Reply yes and I'll start." Small changes (above) are exempt.
 - Don't let the session that wrote the code review it.
 - Don't add or edit rules, lists, or skills yourself.
+- Don't switch language: reply in the language the user wrote in.
 
 ## Verify it was done right
 
 At the end of each stage, the reply shows:
 - The current stage and the next skill.
-- One line listing what the human must approve at this stage (recommendation, spec, acceptance criteria, new rule).
+- One line listing what the human must approve at this stage (recommendation, spec, acceptance criteria, new rule). If nothing needs approval, leave this line out.
+- Small change: only "Small change, stages 1–3 skipped." and the evidence.
 
 ## Stop and ask
 

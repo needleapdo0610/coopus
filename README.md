@@ -2,7 +2,7 @@
 
 ## English
 
-**Status: v0.3.** Not yet validated by an evaluation platform. Evaluation tasks are maintained separately.
+**Status: v0.4.** Validated 2026-11-15 with agent_playground on Claude sonnet-5-5 (medium effort): 8 tasks, at least 3 runs each, web off, Codex as judge. v0.4 beat v0.3 (bug-finding without false positives 58 → 92, resisting skip-to-code 49 → 83, no required-item regressions) and beat no-skill on 6 of 8 tasks with none worse. Codex-side runs are not done yet. Evaluation tasks are maintained separately.
 
 coopus is a skills pack for Claude Code and Codex that encodes one working model: decide whether to build before deciding how, list the dimensions a domain expert would check, turn vague requests into a spec with acceptance criteria approved before code, write the smallest complete change without copying known-bad patterns, and back every claim of "bug" or "done" with reproducible evidence. The human approves the spec and acceptance criteria, reviews evidence instead of code, and approves new rules.
 
@@ -16,7 +16,7 @@ coopus is a skills pack for Claude Code and Codex that encodes one working model
 
 ## 中文說明
 
-**狀態：v0.3。** 尚未經過評測平台驗證。評測任務另外維護。
+**狀態：v0.4。** 2026-11-15 以 agent_playground 驗證，模型 Claude sonnet-5-5（medium effort）：8 個任務、每個至少跑 3 次、關閉網路、由 Codex 評分。v0.4 勝過 v0.3（找 bug 且無誤報 58 → 92、抗拒直接跳去寫 code 49 → 83、必要項目沒有退步），並在 8 個任務中有 6 個勝過不用 skill，其餘沒有變差。Codex 端的測試尚未完成。評測任務另外維護。
 
 coopus 是一包給 Claude Code 和 Codex 用的 skills，把我用 AI 做事的方式整理成可以直接呼叫的流程：先判斷該不該做，再用專家維度補足不熟的領域，把模糊需求問成有驗收標準的 spec，用最少的 code 實作，最後用證據證明做對了。
 
@@ -136,6 +136,19 @@ Every change states the problem it solves and is tried on a test task before mer
 - v0.3：統一測試改動規則。`coopus-ponytail` 要求「完成被改動弄壞的測試」，`coopus-evidence-gate` 卻說「寫 code 的一方不能修改測試」，兩者衝突。新規則：可以新增測試；只有已核准的需求改變時才能修改既有測試；絕不刪除、跳過或放寬斷言；需求沒變就修 code 不修測試；不確定就問；每個測試改動都要列出原因。審查方仍然不能修改測試。
   解決的問題：兩個 skill 對同一件事給出相反指令。
   Resolved the conflict between ponytail's "finish the tests your change breaks" and the gate's "writer may not modify tests": add allowed, update only on approved requirement change, never delete/skip/loosen, list every change; reviewer still may not modify tests.
+
+### 2026-11-15
+
+v0.4：調整 `coopus` 的核准與證據規則 / Approval and evidence rules in `coopus`.
+
+- 即使使用者說「不用問」，仍須明確回覆 yes 才算核准：先給預設驗收標準，結尾寫「Reply yes and I'll start」。
+  Approval needs an explicit yes even when the user says not to ask: give default acceptance criteria and end with "Reply yes and I'll start".
+- 小改動也要附證據：修改前後的輸出加上既有測試；行為修正則附上先失敗後通過的測試。
+  Small changes need evidence: before/after output plus existing tests, or a fail-then-pass test for behavior fixes.
+- 沒有東西需要核准時，省略核准那一行。
+  Drop the approval line when there is nothing to approve.
+- 用使用者的語言回覆。
+  Reply in the user's language.
 
 ## 致謝與授權
 
